@@ -2,6 +2,7 @@ import cv2
 import sys
 from mail import sendEmail
 from flask import Flask, render_template, Response
+from flask_basicauth import BasicAuth
 from camera import VideoCamera
 import time
 import threading
@@ -12,6 +13,10 @@ object_classifier = cv2.CascadeClassifier("models/fullbody_recognition_model.xml
 
 # App Globals (do not edit)
 app = Flask(__name__)
+app.config['BASIC_AUTH_USERNAME'] = 'SOMEONE_CAN_SEE_YOU_WITH_THIS_ACCOUNT'
+app.config['BASIC_AUTH_PASSWORD'] = 'CHANGE_ME_PLEASE'
+app.config['BASIC_AUTH_FORCE'] = True
+
 last_epoch = 0
 
 def check_for_objects():
