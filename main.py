@@ -36,6 +36,7 @@ def check_for_objects():
 				#cv2.imwrite("/tmp/motion.jpg",frame)
 				#tmpFile = open("/tmp/motion.jpg","rb")
 				#byteArr=bytearray(tmpFile)
+				print("Sending MQTT message...")
 				#client.publish("home/door/front/camera",byteArr,0,True)
 				client.publish("home/door/front/motion","ON",0,False)
                                 client.publish("home/door/front/camera",frame,0,True)
