@@ -1,0 +1,12 @@
+[Unit]
+Description=Pi WebCam Service with CV
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+ExecStart=/home/pi/Smart-Security-Camera/runserver.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
