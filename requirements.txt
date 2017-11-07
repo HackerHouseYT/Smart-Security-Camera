@@ -1,3 +1,4 @@
 imutils
 flask
 picamera[array]
+paho-mqtt

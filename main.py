@@ -1,10 +1,20 @@
 import cv2
 import sys
 from mail import sendEmail
+import paho.mqtt.client as mqtt
 from flask import Flask, render_template, Response
 from camera import VideoCamera
 import time
 import threading
+
+
+def on_connect(client, userdata, flags, rc):
+	print("Connected to MQTT server with result code :"+str(rc))
+
+client = mqtt.Client()
+client.on_connect = on_connect
+client.connect("192.168.0.xxx", 1883, 60) # use your MQTT server name
+client.loop_start()
 
 email_update_interval = 600 # sends an email only once in this time interval
 video_camera = VideoCamera(flip=True) # creates a camera object, flip vertically
@@ -21,11 +31,14 @@ def check_for_objects():
 			frame, found_obj = video_camera.get_object(object_classifier)
 			if found_obj and (time.time() - last_epoch) > email_update_interval:
 				last_epoch = time.time()
-				print "Sending email..."
+				print("Sending email...")
 				sendEmail(frame)
-				print "done!"
+				print("Sending MQTT message...")
+				client.publish("home/door/front/motion","ON",0,False)
+				client.publish("home/door/front/camera",frame,0,True)
+				print("done!")
 		except:
-			print "Error sending email: ", sys.exc_info()[0]
+			print("Error sending email: ", sys.exc_info()[0])
 
 @app.route('/')
 def index():
