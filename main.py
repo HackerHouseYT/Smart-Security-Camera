@@ -9,7 +9,7 @@ import threading
 
 
 def on_connect(client, userdata, flags, rc):
-    print("Connected to MQTT server with result code :"+str(rc))
+	print("Connected to MQTT server with result code :"+str(rc))
 
 client = mqtt.Client()
 client.on_connect = on_connect
@@ -33,14 +33,9 @@ def check_for_objects():
 				last_epoch = time.time()
 				print("Sending email...")
 				sendEmail(frame)
-				#cv2.imwrite("/tmp/motion.jpg",frame)
-				#tmpFile = open("/tmp/motion.jpg","rb")
-				#byteArr=bytearray(tmpFile)
 				print("Sending MQTT message...")
-				#client.publish("home/door/front/camera",byteArr,0,True)
 				client.publish("home/door/front/motion","ON",0,False)
-                                client.publish("home/door/front/camera",frame,0,True)
-
+				client.publish("home/door/front/camera",frame,0,True)
 				print("done!")
 		except:
 			print("Error sending email: ", sys.exc_info()[0])
