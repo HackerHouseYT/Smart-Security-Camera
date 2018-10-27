@@ -53,8 +53,8 @@ class VideoCamera(object):
         
         found_something = False
         
-        # return_obj = frame
-        return_obj = gray
+        return_obj = frame
+        # return_obj = gray
         
         for c in cnts:
             # if the contour is too small, ignore it
@@ -62,7 +62,6 @@ class VideoCamera(object):
                 continue
                 
             found_something = True
-            background_frame = gray
             (x, y, w, h) = cv2.boundingRect(c)
             cv2.rectangle(return_obj, (x, y), (x + w, y + h), (153, 0, 204), 2) # different color rectangle for motion detect
             
