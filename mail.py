@@ -10,7 +10,7 @@ fromEmail = 'email@gmail.com'
 fromEmailPassword = 'password'
 
 # Email you want to send the update to
-toEmail = 'vladfedchenko@gmail.com'
+toEmail = 'email2@gmail.com'
 
 def sendEmail(image):
 	msgRoot = MIMEMultipart('related')
