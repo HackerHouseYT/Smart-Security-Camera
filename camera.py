@@ -33,7 +33,7 @@ class VideoCamera(object):
         frame = self.flip_if_needed(self.vs.read()) #grabbing frame
         
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) #graying it
-        gray = cv2.GaussianBlur(gray, (21, 21), 0) #blurring
+        gray = cv2.GaussianBlur(gray, (5, 5), 0) #blurring
         
         global background_frame
         global last_back_update
@@ -53,7 +53,8 @@ class VideoCamera(object):
         
         found_something = False
         
-        return_obj = frame
+        # return_obj = frame
+        return_obj = gray
         
         for c in cnts:
             # if the contour is too small, ignore it
