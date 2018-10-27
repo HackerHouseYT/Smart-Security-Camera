@@ -4,6 +4,8 @@ import imutils
 import time
 import numpy as np
 
+video_res = (640, 480)
+object_det_res = (320, 240)
 
 background_frame = None
 background_update_rate = 120 # 2 mins. Period to update background frame for motion detection.
@@ -12,8 +14,12 @@ motion_det_min_area = 2000 # Regulate motion detection sensitivity. Smaller valu
 
 class VideoCamera(object):
     def __init__(self, flip = False):
-        self.vs = PiVideoStream().start()
+        self.vs = PiVideoStream(resolution=video_res).start()
         self.flip = flip
+        
+        self.x_coef = float(video_res[0]) / object_det_res[0] # needed to translate between frame sizes
+        self.y_coef = float(video_res[1]) / object_det_res[1]
+        
         time.sleep(2.0)
 
     def __del__(self):
@@ -72,6 +78,7 @@ class VideoCamera(object):
         found_objects = False
         frame = self.flip_if_needed(self.vs.read()).copy() 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        gray = cv2.resize(gray, object_det_res, interpolation=cv2.INTER_AREA)
 
         objects = classifier.detectMultiScale(
             gray,
@@ -86,7 +93,11 @@ class VideoCamera(object):
 
         # Draw a rectangle around the objects
         for (x, y, w, h) in objects:
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            cv2.rectangle(frame
+                , (int(self.x_coef * x), int(self.y_coef * y))
+                , (int(self.x_coef * x + self.x_coef * w), int(self.y_coef * y + self.y_coef * h))
+                , (0, 255, 0)
+                , 2)
 
         ret, jpeg = cv2.imencode('.jpg', frame)
         return (jpeg.tobytes(), found_objects)
