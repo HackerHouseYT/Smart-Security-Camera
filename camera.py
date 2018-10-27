@@ -3,9 +3,13 @@ from imutils.video.pivideostream import PiVideoStream
 import imutils
 import time
 import numpy as np
+import datetime
 
 video_res = (640, 480)
 object_det_res = (320, 240)
+
+video_frame_rate = 30
+video_out_dir = '/home/pi/'
 
 background_frame = None
 background_update_rate = 120 # 2 mins. Period to update background frame for motion detection.
@@ -14,7 +18,7 @@ motion_det_min_area = 2000 # Regulate motion detection sensitivity. Smaller valu
 
 class VideoCamera(object):
     def __init__(self, flip = False):
-        self.vs = PiVideoStream(resolution=video_res).start()
+        self.vs = PiVideoStream(resolution=video_res, framerate=video_frame_rate).start()
         self.flip = flip
         
         self.x_coef = float(video_res[0]) / object_det_res[0] # needed to translate between frame sizes
@@ -101,5 +105,19 @@ class VideoCamera(object):
 
         ret, jpeg = cv2.imencode('.jpg', frame)
         return (jpeg.tobytes(), found_objects)
+        
+    def capture_video(self, send_video_len):
+        video_loc = video_out_dir + datetime.datetime.now().strftime("%Y-%m-%d %H-%M-%S") +'.avi'
+        fourcc = cv2.VideoWriter_fourcc(*'X264')
+        out = cv2.VideoWriter(video_loc, fourcc, video_frame_rate, video_res)
+        
+        start_time = time.time()
+        while (time.time() - start_time) <= send_video_len:
+            frame = self.flip_if_needed(self.vs.read())
+            #(_, _, frame) = self.motion_detection()
+            out.write(frame)
+        out.release()
+        
+        return video_loc
 
 
