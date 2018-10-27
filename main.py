@@ -28,8 +28,8 @@ def check_for_objects():
             if use_motion_detection:
                 frame, found_obj = video_camera.motion_detection()
                 if found_obj:
-                    frame, found_obj = video_camera.motion_detection() # motion detection is fired only if detected in two frames in a row 
-                                                                       # (reduces false positives)
+                    # motion detection is fired only if detected in two frames in a row (reduces false positive)
+                    frame, found_obj = video_camera.motion_detection()
             else:
 			    frame, found_obj = video_camera.get_object(object_classifier)
 			if found_obj and (time.time() - last_epoch) > email_update_interval:
